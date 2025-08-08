@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Deploy to Firebase"
-description: "A GitHub Action to deploy to Firebase"
+name: "Deploy to Firebase (All Resources)"
+description: "Deploy all Firebase resources by default; optionally limit with targets (via --only). Creates Hosting preview channels for PRs."
 author: "Jason Miller (https://github.com/developit) and Firebase and Ayoub Oudmane (https://github.com/oudmane)"
 branding:
   icon: "globe"

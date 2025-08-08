@@ -1,9 +1,9 @@
-# 🔥🌎 Firebase Hosting GitHub Action
+# 🔥🌎 Firebase Deploy GitHub Action
 
-- Creates a new preview channel (and its associated preview URL) for every PR on your GitHub repository.
-- Adds a comment to the PR with the preview URL so that you and each reviewer can view and test the PR's changes in a "preview" version of your app.
-- Updates the preview URL with changes from each commit by automatically deploying to the associated preview channel. The URL doesn't change with each new commit.
-- (Optional) Deploys the current state of your GitHub repo to your live channel when the PR is merged.
+- Creates a new Hosting preview channel (and its associated preview URL) for every PR on your GitHub repository.
+- Adds a PR comment with the preview URL.
+- Updates the preview URL with each commit by deploying to the associated preview channel.
+- On production deploys, deploys all Firebase resources by default (no `--only`). Provide `targets` to restrict via `--only`.
 
 ## Setup
 
