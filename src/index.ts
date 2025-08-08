@@ -48,7 +48,14 @@ const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
-const target = getInput("target");
+// Multiline input for targets; split on newlines and commas, trim empties
+const rawTargets = getInput("targets");
+const targets = rawTargets
+  ? rawTargets
+      .split(/\n|,/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+  : undefined;
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 const disableComment = getInput("disableComment");
 
@@ -92,7 +99,7 @@ async function run() {
       startGroup("Deploying to production site");
       const deployment = await deployProductionSite(gacFilename, {
         projectId,
-        target,
+        targets,
         firebaseToolsVersion,
       });
       if (deployment.status === "error") {
@@ -100,7 +107,8 @@ async function run() {
       }
       endGroup();
 
-      const hostname = target ? `${target}.web.app` : `${projectId}.web.app`;
+      // Default to the project's Hosting hostname
+      const hostname = `${projectId}.web.app`;
       const url = `https://${hostname}/`;
       await finish({
         details_url: url,
@@ -120,7 +128,7 @@ async function run() {
       projectId,
       expires,
       channelId,
-      target,
+      targets,
       firebaseToolsVersion,
     });
 

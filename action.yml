@@ -41,12 +41,12 @@ inputs:
     description: "The ID of the channel to deploy to. If you leave this blank,
       a preview channel and its ID will be auto-generated per branch or PR."
     required: false
-  target:
-    description:
-      "The target name of the Hosting site to deploy to. If you leave this blank,
-      the default target or all targets defined in the .firebaserc will be deployed to.
-      Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites)
-      for more information about deploy targets."
+  targets:
+    description: >-
+      Optional list of Firebase deploy targets to pass to the CLI via `--only`.
+      Provide as a multiline input. When set, the action runs `firebase deploy --only <targets>`.
+      When omitted, the action runs `firebase deploy` (deploys all configured resources) for production,
+      and `firebase hosting:channel:deploy` for previews.
     required: false
   entryPoint:
     description:

@@ -49,7 +49,7 @@ async function fakeExec(
   const isChannelDeploy = args[0] === "hosting:channel:deploy";
   let successOutput;
 
-  if (args.includes("--target")) {
+  if (args.includes("--only")) {
     successOutput = isChannelDeploy
       ? channelMultiSiteSuccess
       : liveDeployMultiSiteSuccess;
@@ -108,13 +108,13 @@ describe("deploy", () => {
       expect(deployFlags).toContain("hosting:channel:deploy");
     });
 
-    it("specifies a target when one is provided", async () => {
+    it("adds --only when targets are provided", async () => {
       // @ts-ignore read-only property
       exec.exec = jest.fn(fakeExec);
 
       const config: ChannelDeployConfig = {
         ...baseChannelDeployConfig,
-        target: "my-second-site",
+        targets: ["my-second-site"],
       };
 
       await deployPreview("my-file", config);
@@ -146,8 +146,8 @@ describe("deploy", () => {
       const args = exec.exec.mock.calls;
       const deployFlags = args[0][1];
       expect(deployFlags).toContain("deploy");
-      expect(deployFlags).toContain("--only");
-      expect(deployFlags).toContain("hosting");
+      // By default, no --only is added so all resources are deployed
+      expect(deployFlags).not.toContain("--only");
     });
   });
 });

@@ -127,16 +127,30 @@ An exception might be that you always want to deploy a certain branch to a
 long-lived preview channel (for example, you may want to deploy every commit
 from your `next` branch to a `preprod` preview channel).
 
-### `target` _{string}_
+### `targets` _{string list}_
 
-The target name of the Hosting site to deploy to. If you leave this blank,
-the default target or all targets defined in the `.firebaserc` will be deployed to.
+Optional list of Firebase deploy targets to pass to the CLI via `--only`.
 
-You usually want to leave this blank unless you have set up multiple sites in the Firebase Hosting UI
-and are trying to target just one of those sites with this action.
+- When set, production deploys will run: `firebase deploy --only <targets>`
+- When omitted, production deploys will run: `firebase deploy` (deploys all configured resources)
+- Preview deploys always use `firebase hosting:channel:deploy`; when `targets` is set, `--only <targets>` is added
 
-Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites)
-for more information about deploy targets.
+Provide as a multiline input or comma-separated values. Examples:
+
+```yaml
+with:
+  targets: |
+    hosting
+    firestore
+    functions:myFunc
+```
+
+or
+
+```yaml
+with:
+  targets: hosting,firestore,functions:myFunc
+```
 
 ### `entryPoint` _{string}_
 

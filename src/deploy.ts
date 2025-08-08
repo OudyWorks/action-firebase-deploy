@@ -42,7 +42,8 @@ export type ProductionSuccessResult = {
 
 type DeployConfig = {
   projectId: string;
-  target?: string;
+  // Optional list of Firebase targets to pass via --only
+  targets?: string[];
   // Optional version specification for firebase-tools. Defaults to `latest`.
   firebaseToolsVersion?: string;
 };
@@ -129,14 +130,14 @@ export async function deployPreview(
   gacFilename: string,
   deployConfig: ChannelDeployConfig
 ) {
-  const { projectId, channelId, target, expires, firebaseToolsVersion } =
+  const { projectId, channelId, targets, expires, firebaseToolsVersion } =
     deployConfig;
 
   const deploymentText = await execWithCredentials(
     [
       "hosting:channel:deploy",
       channelId,
-      ...(target ? ["--only", target] : []),
+      ...(targets && targets.length > 0 ? ["--only", targets.join(",")] : []),
       ...(expires ? ["--expires", expires] : []),
     ],
     projectId,
@@ -155,10 +156,13 @@ export async function deployProductionSite(
   gacFilename,
   productionDeployConfig: ProductionDeployConfig
 ) {
-  const { projectId, target, firebaseToolsVersion } = productionDeployConfig;
+  const { projectId, targets, firebaseToolsVersion } = productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
-    ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
+    [
+      "deploy",
+      ...(targets && targets.length > 0 ? ["--only", targets.join(",")] : []),
+    ],
     projectId,
     gacFilename,
     { firebaseToolsVersion }
