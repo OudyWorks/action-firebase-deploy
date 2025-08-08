@@ -35,9 +35,8 @@ export type ChannelSuccessResult = {
 
 export type ProductionSuccessResult = {
   status: "success";
-  result: {
-    hosting: string | string[];
-  };
+  // Result contains resource-specific outputs from firebase-tools. Keys vary by resource.
+  result: Record<string, unknown>;
 };
 
 type DeployConfig = {

@@ -110,12 +110,38 @@ async function run() {
       // Default to the project's Hosting hostname
       const hostname = `${projectId}.web.app`;
       const url = `https://${hostname}/`;
+      // Build a human-readable summary of deployed resources from deployment.result
+      const deployedResources: string[] = [];
+      try {
+        const result: Record<string, unknown> = (deployment as any).result || {};
+        for (const key of Object.keys(result)) {
+          const val = (result as any)[key];
+          if (Array.isArray(val)) {
+            deployedResources.push(`${key}: ${val.length} item(s)`);
+          } else if (typeof val === "string") {
+            deployedResources.push(`${key}: ${val}`);
+          } else if (typeof val === "object" && val) {
+            deployedResources.push(`${key}: updated`);
+          } else {
+            deployedResources.push(`${key}`);
+          }
+        }
+      } catch (e) {
+        // ignore formatting errors
+      }
+
+      const summaryLines = [
+        `Deployed resources:`,
+        ...(deployedResources.length > 0 ? deployedResources : ["hosting"]),
+        `Primary URL: [${hostname}](${url})`,
+      ];
+
       await finish({
         details_url: url,
         conclusion: "success",
         output: {
           title: `Production deploy succeeded`,
-          summary: `[${hostname}](${url})`,
+          summary: summaryLines.join("\n"),
         },
       });
       return;
