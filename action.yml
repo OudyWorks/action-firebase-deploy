@@ -54,6 +54,11 @@ inputs:
       directory"
     default: "."
     required: false
+  config:
+    description: >-
+      The Firebase config file to use (passed as --config). Relative to entryPoint.
+    default: firebase.json
+    required: false
   firebaseToolsVersion:
     description: >-
       The version of firebase-tools to use. Defaults to `latest`.

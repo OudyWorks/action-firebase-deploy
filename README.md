@@ -165,6 +165,19 @@ The version of `firebase-tools` to use. If not specified, defaults to `latest`.
 
 Disable commenting in a PR with the preview URL.
 
+### `config` _{string}_
+
+The Firebase config file to use, passed to the CLI via `--config`. Relative to `entryPoint`.
+Defaults to `firebase.json`.
+
+Example:
+
+```yaml
+with:
+  entryPoint: .
+  config: firebase.prod.json
+```
+
 ## Outputs
 
 Values emitted by this action that can be consumed by other actions later in your workflow
