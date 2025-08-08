@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: "Deploy to Firebase (All Resources)"
-description: "Deploy all Firebase resources by default; optionally limit with targets (via --only). Creates Hosting preview channels for PRs."
+description: "Deploys Firebase. Defaults to all resources; set targets to limit. Creates Hosting preview channels for PRs."
 author: "Jason Miller (https://github.com/developit) and Firebase and Ayoub Oudmane (https://github.com/oudmane)"
 branding:
   icon: "globe"
