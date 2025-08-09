@@ -85,7 +85,7 @@ jobs:
 
 ## Options
 
-### `firebaseServiceAccount` _{string}_ (required)
+### `firebaseServiceAccount` _{string}_
 
 This is a service account JSON key. The easiest way to set it up is to run `firebase init hosting:github`. However, it can also be [created manually](./docs/service-account.md).
 
@@ -96,6 +96,27 @@ of your repository settings and add it as `FIREBASE_SERVICE_ACCOUNT`:
 `https://github.com/USERNAME/REPOSITORY/settings/secrets`.
 
 ### `repoToken` _{string}_
+### `firebaseToken` _{string}_
+
+A Firebase CI token used to authenticate the Firebase CLI (passed via `--token`).
+Use this if you prefer not to use a service account.
+
+Authentication requirement: provide either `firebaseServiceAccount` or `firebaseToken`. If neither is provided, the action will fail.
+
+Examples:
+
+Service account auth:
+```yaml
+with:
+  firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+```
+
+Token auth:
+```yaml
+with:
+  firebaseToken: "${{ secrets.FIREBASE_TOKEN }}"
+```
+
 
 Adding `repoToken: "${{secrets.GITHUB_TOKEN}}"` lets the action comment on PRs
 with the preview URL for the associated preview channel. You don't need to set

@@ -40,9 +40,8 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
-const googleApplicationCredentials = getInput("firebaseServiceAccount", {
-  required: true,
-});
+const googleApplicationCredentials = getInput("firebaseServiceAccount");
+const firebaseToken = getInput("firebaseToken");
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
@@ -89,16 +88,28 @@ async function run() {
     }
     endGroup();
 
-    startGroup("Setting up CLI credentials");
-    const gacFilename = await createGacFile(googleApplicationCredentials);
-    console.log(
-      "Created a temporary file with Application Default Credentials."
-    );
-    endGroup();
+    if (!googleApplicationCredentials && !firebaseToken) {
+      throw Error(
+        "Authentication required: provide either firebaseServiceAccount or firebaseToken."
+      );
+    }
+
+    let auth: { gacFilename?: string; firebaseToken?: string } = {};
+    if (googleApplicationCredentials) {
+      startGroup("Setting up CLI credentials");
+      const gacFilename = await createGacFile(googleApplicationCredentials);
+      console.log(
+        "Created a temporary file with Application Default Credentials."
+      );
+      endGroup();
+      auth.gacFilename = gacFilename;
+    } else if (firebaseToken) {
+      auth.firebaseToken = firebaseToken;
+    }
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
-      const deployment = await deployProductionSite(gacFilename, {
+      const deployment = await deployProductionSite(auth, {
         projectId,
         targets,
         config,
@@ -152,7 +163,7 @@ async function run() {
     const channelId = getChannelId(configuredChannelId, context);
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
-    const deployment = await deployPreview(gacFilename, {
+    const deployment = await deployPreview(auth, {
       projectId,
       expires,
       channelId,

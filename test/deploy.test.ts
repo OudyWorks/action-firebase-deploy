@@ -70,7 +70,7 @@ describe("deploy", () => {
     exec.exec = jest.fn(fakeExec).mockImplementationOnce(fakeExecFail);
 
     const deployOutput: ChannelSuccessResult = (await deployPreview(
-      "my-file",
+      { gacFilename: "my-file" },
       baseChannelDeployConfig
     )) as ChannelSuccessResult;
 
@@ -94,7 +94,7 @@ describe("deploy", () => {
       exec.exec = jest.fn(fakeExec);
 
       const deployOutput: ChannelSuccessResult = (await deployPreview(
-        "my-file",
+        { gacFilename: "my-file" },
         baseChannelDeployConfig
       )) as ChannelSuccessResult;
 
@@ -117,7 +117,7 @@ describe("deploy", () => {
         targets: ["my-second-site"],
       };
 
-      await deployPreview("my-file", config);
+      await deployPreview({ gacFilename: "my-file" }, config);
 
       // Check the arguments that exec was called with
       // @ts-ignore Jest adds a magic "mock" property
@@ -134,7 +134,7 @@ describe("deploy", () => {
       exec.exec = jest.fn(fakeExec);
 
       const deployOutput: ProductionSuccessResult = (await deployProductionSite(
-        "my-file",
+        { gacFilename: "my-file" },
         baseLiveDeployConfig
       )) as ProductionSuccessResult;
 

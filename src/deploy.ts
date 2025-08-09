@@ -72,10 +72,12 @@ export function interpretChannelDeployResult(
   };
 }
 
+type AuthOptions = { gacFilename?: string; firebaseToken?: string };
+
 async function execWithCredentials(
   args: string[],
   projectId,
-  gacFilename,
+  auth: AuthOptions,
   opts: { debug?: boolean; firebaseToolsVersion?: string }
 ) {
   let deployOutputBuf: Buffer[] = [];
@@ -88,6 +90,7 @@ async function execWithCredentials(
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
+        ...(auth.firebaseToken ? ["--token", auth.firebaseToken] : []),
         debug
           ? "--debug" // gives a more thorough error message
           : "--json", // allows us to easily parse the output
@@ -101,7 +104,9 @@ async function execWithCredentials(
         env: {
           ...process.env,
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
+          ...(auth.gacFilename
+            ? { GOOGLE_APPLICATION_CREDENTIALS: auth.gacFilename }
+            : {}), // the CLI will automatically authenticate with this env variable set
         },
       }
     );
@@ -113,7 +118,7 @@ async function execWithCredentials(
       console.log(
         "Retrying deploy with the --debug flag for better error output"
       );
-      await execWithCredentials(args, projectId, gacFilename, {
+      await execWithCredentials(args, projectId, auth, {
         debug: true,
         firebaseToolsVersion,
       });
@@ -128,7 +133,7 @@ async function execWithCredentials(
 }
 
 export async function deployPreview(
-  gacFilename: string,
+  auth: AuthOptions,
   deployConfig: ChannelDeployConfig
 ) {
   const { projectId, channelId, targets, expires, firebaseToolsVersion, config } =
@@ -143,7 +148,7 @@ export async function deployPreview(
       ...(expires ? ["--expires", expires] : []),
     ],
     projectId,
-    gacFilename,
+    auth,
     { firebaseToolsVersion }
   );
 
@@ -155,7 +160,7 @@ export async function deployPreview(
 }
 
 export async function deployProductionSite(
-  gacFilename,
+  auth: AuthOptions,
   productionDeployConfig: ProductionDeployConfig
 ) {
   const { projectId, targets, firebaseToolsVersion, config } = productionDeployConfig;
@@ -167,7 +172,7 @@ export async function deployProductionSite(
       ...(targets && targets.length > 0 ? ["--only", targets.join(",")] : []),
     ],
     projectId,
-    gacFilename,
+    auth,
     { firebaseToolsVersion }
   );
 
