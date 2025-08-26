@@ -93,7 +93,7 @@ async function execWithCredentials(
         ...(auth.firebaseToken ? ["--token", auth.firebaseToken] : []),
         debug
           ? "--debug" // gives a more thorough error message
-          : "", // allows us to easily parse the output
+          : "--json", // allows us to easily parse the output
       ],
       {
         listeners: {
@@ -103,7 +103,7 @@ async function execWithCredentials(
         },
         env: {
           ...process.env,
-          FIREBASE_DEPLOY_AGENT: "oudyworks-action-firebase-deploy",
+          FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
           ...(auth.gacFilename
             ? { GOOGLE_APPLICATION_CREDENTIALS: auth.gacFilename }
             : {}), // the CLI will automatically authenticate with this env variable set
