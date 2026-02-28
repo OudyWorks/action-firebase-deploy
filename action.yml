@@ -37,13 +37,10 @@ inputs:
     default: "7d"
     required: false
   projectId:
-    description:
-      "The project to deploy to. If you leave this blank, make sure you check in
-      a .firebaserc file"
+    description: "The project to deploy to. If you leave this blank, make sure you check in a .firebaserc file"
     required: false
   channelId:
-    description: "The ID of the channel to deploy to. If you leave this blank,
-      a preview channel and its ID will be auto-generated per branch or PR."
+    description: "The ID of the channel to deploy to. If you leave this blank, a preview channel and its ID will be auto-generated per branch or PR."
     required: false
   targets:
     description: >-
@@ -53,9 +50,7 @@ inputs:
       and `firebase hosting:channel:deploy` for previews.
     required: false
   entryPoint:
-    description:
-      "The location of your firebase.json file, relative to the root of your
-      directory"
+    description: "The location of your firebase.json file, relative to the root of your directory"
     default: "."
     required: false
   config:
@@ -71,6 +66,10 @@ inputs:
   disableComment:
     description: >-
       Disable auto-commenting with the preview channel URL to the pull request
+    default: "false"
+    required: false
+  force:
+    description: "Pass 'true' to use the --force flag with firebase deploy. This will automatically accept any warning or prompts during deploy. Use with caution."
     default: "false"
     required: false
 outputs:

@@ -52,6 +52,8 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
           projectId: your-Firebase-project-ID
+          # Optionally add Force flag
+          # force: true
 ```
 
 ### Deploy to your live channel on merge
@@ -81,6 +83,8 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           projectId: your-Firebase-project-ID
           channelId: live
+          # Optionally add Force flag
+          # force: true
 ```
 
 ## Options
@@ -198,6 +202,10 @@ with:
   entryPoint: .
   config: firebase.prod.json
 ```
+
+### `force` _{boolean}_
+
+Uses the Firebase CLI's `--force` flag to automatically accept all interactive prompts.
 
 ## Outputs
 

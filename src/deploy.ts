@@ -47,14 +47,18 @@ type DeployConfig = {
   config?: string;
   // Optional version specification for firebase-tools. Defaults to `latest`.
   firebaseToolsVersion?: string;
+  force?: boolean;
 };
 
 export type ChannelDeployConfig = DeployConfig & {
   expires: string;
   channelId: string;
+  force?: boolean;
 };
 
-export type ProductionDeployConfig = DeployConfig & {};
+export type ProductionDeployConfig = DeployConfig & {
+  force?: boolean;
+};
 
 export function interpretChannelDeployResult(
   deployResult: ChannelSuccessResult
@@ -78,11 +82,12 @@ async function execWithCredentials(
   args: string[],
   projectId,
   auth: AuthOptions,
-  opts: { debug?: boolean; firebaseToolsVersion?: string }
+  opts: { debug?: boolean; firebaseToolsVersion?: string; force?: boolean }
 ) {
   let deployOutputBuf: Buffer[] = [];
   const debug = opts.debug || false;
   const firebaseToolsVersion = opts.firebaseToolsVersion || "latest";
+  const force = opts.force;
 
   try {
     await exec(
@@ -91,6 +96,7 @@ async function execWithCredentials(
         ...args,
         ...(projectId ? ["--project", projectId] : []),
         ...(auth.firebaseToken ? ["--token", auth.firebaseToken] : []),
+        ...(force ? ["--force"] : []),
         debug
           ? "--debug" // gives a more thorough error message
           : "--json", // allows us to easily parse the output
@@ -121,6 +127,7 @@ async function execWithCredentials(
       await execWithCredentials(args, projectId, auth, {
         debug: true,
         firebaseToolsVersion,
+        force,
       });
     } else {
       throw e;
@@ -136,7 +143,7 @@ export async function deployPreview(
   auth: AuthOptions,
   deployConfig: ChannelDeployConfig
 ) {
-  const { projectId, channelId, targets, expires, firebaseToolsVersion, config } =
+  const { projectId, channelId, targets, expires, firebaseToolsVersion, config, force } =
     deployConfig;
 
   const deploymentText = await execWithCredentials(
@@ -149,7 +156,7 @@ export async function deployPreview(
     ],
     projectId,
     auth,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion, force }
   );
 
   const deploymentResult = JSON.parse(deploymentText.trim()) as
@@ -163,7 +170,8 @@ export async function deployProductionSite(
   auth: AuthOptions,
   productionDeployConfig: ProductionDeployConfig
 ) {
-  const { projectId, targets, firebaseToolsVersion, config } = productionDeployConfig;
+  const { projectId, targets, firebaseToolsVersion, config, force } =
+    productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
     [
@@ -173,7 +181,7 @@ export async function deployProductionSite(
     ],
     projectId,
     auth,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion, force }
   );
 
   const deploymentResult = JSON.parse(deploymentText) as

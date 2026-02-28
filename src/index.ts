@@ -58,6 +58,7 @@ const targets = rawTargets
   : undefined;
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 const disableComment = getInput("disableComment");
+const force = getInput("force") === "true";
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -114,6 +115,7 @@ async function run() {
         targets,
         config,
         firebaseToolsVersion,
+        force,
       });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
@@ -170,6 +172,7 @@ async function run() {
       targets,
       config,
       firebaseToolsVersion,
+      force,
     });
 
     if (deployment.status === "error") {
